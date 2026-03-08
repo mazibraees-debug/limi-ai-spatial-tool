@@ -4,17 +4,20 @@ FROM python:3.10-slim
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies for OpenCV and build tools
 RUN apt-get update && apt-get install -y \
     build-essential \
     libsm6 \
     libxext6 \
     libxrender-dev \
+    libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements and install Python dependencies with caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy the Django project
 COPY . .
@@ -24,13 +27,14 @@ ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=spatial_dashboard.settings
 
 # Create necessary directories
-RUN mkdir -p /app/spatial_dashboard/staticfiles /app/spatial_dashboard/media
+RUN mkdir -p /app/spatial_dashboard/staticfiles /app/spatial_dashboard/media /app/spatial_dashboard/uploads
 
-# Run migrations without errors
-RUN cd spatial_dashboard && python manage.py migrate --noinput --run-syncdb 2>/dev/null || true
+# Copy entrypoint script
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
 # Expose port
 EXPOSE 8000
 
-# Run the Django server
-CMD ["sh", "-c", "cd /app/spatial_dashboard && python manage.py runserver 0.0.0.0:8000"]
+# Run the entrypoint script
+CMD ["./entrypoint.sh"]
