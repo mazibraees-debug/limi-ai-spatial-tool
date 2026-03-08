@@ -1,3 +1,13 @@
+---
+title: Limi AI Spatial Analysis Tool
+emoji: 🏠
+colorFrom: blue
+colorTo: gray
+sdk: docker
+app_file: spatial_dashboard/manage.py
+pinned: false
+---
+
 # Limi AI Spatial Analysis & Interior Refinement Tool
 
 ## Overview

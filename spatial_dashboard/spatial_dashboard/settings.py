@@ -3,13 +3,14 @@ Django settings for spatial_dashboard project.
 """
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-#l&43af8$@$sz3n0of!8c$mokoxa8rlsgz@0hwr#(-xxxb5k1#'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-#l&43af8$@$sz3n0of!8c$mokoxa8rlsgz@0hwr#(-xxxb5k1#')
 
-DEBUG = False
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['*']
 
