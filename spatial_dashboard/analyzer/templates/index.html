@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Limi AI Dashboard</title>
+
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'style.css' %}">
+
+</head>
+
+<body>
+
+<h1>Limi AI Dashboard</h1>
+
+<div class="container">
+
+<div class="upload-box">
+
+<h3>Upload Room Image</h3>
+
+<form method="POST" enctype="multipart/form-data">
+
+{% csrf_token %}
+
+<input type="file" name="image" required>
+
+<br>
+
+<button type="submit">Generate Lighting</button>
+
+</form>
+
+</div>
+
+<div class="stats">
+
+<h3>Spatial Stats</h3>
+
+{% if analysis %}
+<span class="badge">Detected: {{ analysis.room_type }}</span>
+<span class="badge">Lighting: {{ analysis.lighting }}</span>
+<span class="badge">Occupancy: {{ analysis.person_present|yesno:"Yes,No" }}</span>
+{% endif %}
+
+</div>
+
+</div>
+
+{% if processed_image %}
+
+<div class="images">
+
+<div>
+
+<h3>Original</h3>
+<img src="{{ uploaded_image }}">
+
+</div>
+
+<div>
+
+<h3>AI Refined</h3>
+<img id="processed" src="{{ processed_image }}" style="display:none" onload="showImage()">
+<div id="loading">Generating AI lighting... Please wait.</div>
+
+</div>
+
+</div>
+
+{% endif %}
+
+<script>
+function showImage() {
+    document.getElementById('processed').style.display = 'block';
+    document.getElementById('loading').style.display = 'none';
+    clearInterval(interval);
+}
+
+function checkImage() {
+    fetch('{{ processed_image }}')
+        .then(response => {
+            if (response.ok) {
+                document.getElementById('processed').src = '{{ processed_image }}';
+                showImage();
+            }
+        })
+        .catch(() => {});
+}
+
+var interval = setInterval(checkImage, 2000);  // Check every 2 seconds
+</script>
+
+</body>
+</html>
