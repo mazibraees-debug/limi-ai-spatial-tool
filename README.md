@@ -97,6 +97,7 @@ This implementation fulfills the technical assessment requirements, integrating 
 limi-ai-spatial-tool/
 ├── .gitignore                 # Ignores venv, media, logs, etc.
 ├── requirements.txt           # Python dependencies
+├── Dockerfile                 # For containerized deployment
 ├── spatial_dashboard/         # Django project root
 │   ├── manage.py
 │   ├── spatial_dashboard/     # Project settings
@@ -130,6 +131,17 @@ limi-ai-spatial-tool/
    - Uses Stable Diffusion to re-imagine lighting based on detection.
    - Saves refined image to media/.
 4. **UI Updates**: Page renders with analysis stats immediately. JavaScript polls for the refined image and displays it when ready.
+
+## Deployment on Hugging Face Spaces
+
+This project is containerized with Docker for easy deployment on Hugging Face Spaces.
+
+1. **Push to GitHub**: Upload the code to a public GitHub repository.
+2. **Create a Space**: Go to [Hugging Face Spaces](https://huggingface.co/spaces), create a new Space, select "Docker" as the SDK, and link your repo.
+3. **Configuration**: The Space will use the provided `Dockerfile` to build and run the app. It exposes port 8000.
+4. **Access**: Once deployed, the app will be available at `https://your-username-space-name.hf.space`.
+
+Note: Due to resource constraints on free Spaces (CPU-only, limited RAM), image generation may be slow. Consider upgrading to a paid tier for better performance.
 
 ## Evaluation Notes
 - **Model Integration**: Seamless backend triggering with async generation and loading states.
